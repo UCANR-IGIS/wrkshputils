@@ -1,0 +1,91 @@
+---
+title: "`r params$rpt_title`"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+params:
+   rpt_elemnts: NA
+   rpt_title: "Google Form Summary"
+output: html_document
+
+---
+
+```{css echo = FALSE}
+h1 {
+  font-weight:bold;
+  font-size:26px;
+  color:#3c763d;
+  margin-top:2em;
+}
+h1.title {
+  font-size:30px;
+  color:black;
+}
+h2 {
+  font-weight:bold;
+  font-size:22px;
+  color:#286090;
+}
+h3 {
+  font-weight:bold;
+  font-size:18px;
+}
+p.qtext {
+  font-size:16px;
+  font-style:italic;
+  margin-top:2em;
+  color:#286090;
+}
+p.desc {
+  color:black;
+  font-size:14px;
+}
+
+
+```
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(htmltools)
+library(ggplot2)
+library(knitr)
+```
+
+
+```{r echo = FALSE, results = 'asis'}
+for (i in 1:length(params$rpt_elemnts)) {
+  
+  if (inherits(params$rpt_elemnts[[i]], "ggplot_with_params")) {
+
+    ## Get the plotting parameters: width in px | height in px | dpi
+    plt_wdt_hgt_dpi <- params$rpt_elemnts[[i]][[2]] %>% strsplit("\\|") %>% extract2(1) %>% trimws() %>% as.numeric()
+
+    ## Create a temp PNG file
+    ggtmp_fn <- tempfile("gfs_ggplot-", fileext = ".png")
+    
+    ## Save the ggplot to the temp file. We compute the width and height in terms of inches
+    ## so that the text elements will size correctly
+    ggsave(filename = ggtmp_fn,
+           plot = params$rpt_elemnts[[i]][[1]],
+           device = "png",
+           width = plt_wdt_hgt_dpi[1] / plt_wdt_hgt_dpi[3],
+           height = plt_wdt_hgt_dpi[2] / plt_wdt_hgt_dpi[3],
+           units = "in",
+           dpi = plt_wdt_hgt_dpi[3])
+
+    ## Create the img tag using a image_uri
+    print(img(src=knitr::image_uri(ggtmp_fn)))
+
+    ## Delete the temp file
+    unlink(ggtmp_fn)
+
+  } else {
+    print(params$rpt_elemnts[[i]])
+  }
+}
+```
+
+<p style="color:#556B2F; font-style:italic; font-size:90%; text-align:right;">Created with:<br/><a href="https://ucanr-igis.github.io/workshop_utils/" target="_blank" rel="noopener">R Workshop Utils</a> by IGIS</p>
+
+<p>&nbsp;</p>
+
+
+

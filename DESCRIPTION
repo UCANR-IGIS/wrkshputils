@@ -1,0 +1,22 @@
+Package: wrkshputils
+Type: Package
+Title: Utilities for Workshops
+Version: 0.1.0
+Date: 2021-11-06
+Maintainer: Andy Lyons <andlyons@ucanr.edu>
+Description: Utilties for planning and conducting worksohps
+License: GPL-3
+Encoding: UTF-8
+LazyData: true
+Authors@R: person("Andy", "Lyons", email = "andlyons@ucanr.edu", role = c("aut", "cre"))
+BugReports: https://github.com/ucanr-igis/uasimg/issues
+URL: https://github.com/ucanr-igis/uasimg
+Imports: 
+    magrittr,
+    dplyr,
+    htmltools,
+    ggplot2,
+    crayon,
+    rmarkdown
+RoxygenNote: 7.1.1
+    

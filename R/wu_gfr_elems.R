@@ -51,6 +51,14 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
         if (is.na(elem_qtext)) {
           message(yellow(paste0(" - row ", i + 1, ": question text missing")))
         } else {
+
+          if (!is.na(elem_prp$vars)) {
+            if (grepl("survey_size", elem_prp$vars)) {
+              elem_qtext <- elem_qtext %>%
+                gsub("\\[n\\]", nrow(resp_tbl), .)
+            }
+          }
+
           res[[length(res) + 1]] <- p(elem_qtext, class = "desc")
         }
 
@@ -81,13 +89,16 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
           message(yellow(paste0(" - row ", i + 1, ": could not find the column `", elem_prp$column, "`")))
         }
 
-
       } else if (substr(elem_type, 1, 5) == "histo") {
 
         ## Histogram (vertical or horizontal)
         if (elem_prp$column %in% names(resp_tbl)) {
 
+          ## Initialize a placeholder for 'other' values
+          other_vals_chr <- NA
+
           if (identical(elem_prp$multi_select, TRUE)) {
+
             ## Need to get all the values
             if (is.na(elem_prp$all_vals)) {
               message(red(paste0(" - row ", i + 1, ": can not process a multi-select histo if all_vals is missing")))
@@ -99,10 +110,52 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
               ## Get a vector of all possible values
               all_vals_vec <- elem_prp$all_vals %>%  strsplit("\\|") %>% extract2(1) %>% trimws()
 
-              vals_tab_df <- do.call(rbind, lapply(all_vals_vec, function(x) data.frame(resp = x,
-                                                                                        cnt = sum(grepl(x, unparsed_resp_vec, ignore.case = TRUE))    )))
+              vals_tab_df <- do.call(rbind,
+                                     lapply(all_vals_vec,
+                                            function(x) data.frame(resp = x,
+                                                                   cnt = sum(grepl(x, unparsed_resp_vec, fixed = TRUE)))))
+              ## fixed = TRUE is needed if the response has an embedded '(' or other character that is used in regex expresssions
 
               vals_tab_lst <- setNames(split(vals_tab_df[,2], seq(nrow(vals_tab_df))), vals_tab_df$resp )
+
+              ## Get the 'other' values
+              if ("Other…" %in% all_vals_vec) {
+
+                # THIS APPROACH DIDN'T WORK - YOU CAN'T RELIABLE SPLIT ANSWERS AT COMMAS, BECAUSE SOME OF THE STANDARD
+                # CHOICES MIGHT HAVE COMMAS IN THEM!!
+                # unparsed_resp_split <- unparsed_resp_vec %>%
+                #   strsplit(",", fixed = TRUE) %>%
+                #   unlist() %>%
+                #   trimws()
+                #
+                # other_vals_vec <- unparsed_resp_split[!unparsed_resp_split %in% all_vals_vec]
+                #
+                # if (length(other_vals_vec) > 0) {
+                #   other_vals_chr <- paste(other_vals_vec, collapse = ", ")
+                # }
+
+                ## Delete all the known values from ther responses. If anything is left, that's the 'Other' responses
+                resp_others <- unparsed_resp_vec
+
+                ## Add ', ' after the last character for all non-empty responses
+                resp_notempty_idx <- which(nchar(resp_others) > 0)
+                resp_others[resp_notempty_idx] <- paste0(resp_others[resp_notempty_idx], ", ")
+
+                ## Delete all known responses
+                for (j in 1:length(all_vals_vec)) {
+                  resp_others <- resp_others %>%
+                    gsub(paste0(all_vals_vec[j], ", "), "", ., fixed = TRUE)
+                }
+
+                ## Delete those that are empty
+                resp_others <- resp_others[resp_others!=""]
+
+                ## If there's anything left, that's an 'other'
+                if (length(resp_others) > 0) {
+                  other_vals_chr <- paste("<li>", gsub(", $", "", resp_others) , "</li>", collapse = "\n")
+                }
+
+              }
 
             }
 
@@ -180,18 +233,15 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
           class(ggplot_specs) <- c("list", "ggplot_with_params")
           res[[length(res) + 1]] <- ggplot_specs
 
-          # if (!is.null(div_post)) {res[[length(res) + 1]] <- div_post}
+          if (!is.na(other_vals_chr)) {
+            res[[length(res) + 1]] <- HTML("<p style=\"margin-top:1em;\">Other:</p><ul>", other_vals_chr, "</ul>")
+          }
+
 
         } else {
           message(yellow(paste0(" - row ", i + 1, ": could not find the column `", elem_prp$column, "`")))
         }
 
-        ## This has been paused, because I discovered you can view the summary of
-        ## Google Form in print preview mode (press ctrl+p), and then print it PDF.
-
-        ## The next step for a R based report would include adding two addition argument(s)
-        ## for generating the bar plot, including i) all possible values to show
-        ## (i.e., 1,2,3,4,5) and axis labels ('1 (poor)', '2', '3', '4', '5 (excellent')
 
       } else {
         message(red(paste0(" - row ", i + 1, ": unknown report element type: ", elem_type)))

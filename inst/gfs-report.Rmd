@@ -1,6 +1,6 @@
 ---
 title: "`r params$rpt_title`"
-date: "`r format(Sys.time(), '%d %B, %Y')`"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 params:
    rpt_elemnts: NA
    rpt_title: "Google Form Summary"

@@ -59,14 +59,16 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
             }
           }
 
-          res[[length(res) + 1]] <- p(elem_qtext, class = "desc")
+          ## res[[length(res) + 1]] <- p(elem_qtext, class = "desc")
+          res[[length(res) + 1]] <- HTML(paste0("<p class='desc'>", elem_qtext, "</p>"))
         }
 
       } else if (elem_type == "bullets") {
         ## Bullets
         if (elem_prp$column %in% names(resp_tbl)) {
 
-          res[[length(res) + 1]] <- p(elem_qtext, class = "qtext")
+          # res[[length(res) + 1]] <- p(elem_qtext, class = "qtext")
+          res[[length(res) + 1]] <- HTML(paste0("<p class='qtext'>", elem_qtext, "</p>"))
 
           ## Get the raw text values
           comments_li <- resp_tbl %>%
@@ -96,8 +98,13 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
 
           ## Initialize a placeholder for 'other' values
           other_vals_chr <- NA
+          select_many_lbl <- NULL
 
           if (identical(elem_prp$multi_select, TRUE)) {
+
+            if (identical(elem_prp$howmany_lbl, TRUE)) {
+              select_many_lbl <- p("Select all that apply.", class = "howmany")
+            }
 
             ## Need to get all the values
             if (is.na(elem_prp$all_vals)) {
@@ -161,12 +168,19 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
 
 
           } else {
+
             ## Not a multi-select column
             vals_tab_lst <- resp_tbl %>%
               pull(elem_prp$column) %>%
               na.omit() %>%
               table() %>%
               as.list()
+
+            if (identical(elem_prp$howmany_lbl, TRUE)) {
+              select_many_lbl <- p("Pick one.", class = "howmany")
+            }
+
+
           }
 
           ## Add missing values to the frequency list
@@ -217,7 +231,13 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
           }
 
           ## Add elements to res
-          res[[length(res) + 1]] <- p(elem_qtext, class = "qtext")
+          ## res[[length(res) + 1]] <- p(elem_qtext, class = "qtext")
+          res[[length(res) + 1]] <- HTML(paste0("<p class='qtext'>", elem_qtext, "</p>"))
+
+          if (!is.null(select_many_lbl)) {
+            res[[length(res) + 1]] <- select_many_lbl
+          }
+
           # if (!is.null(div_pre)) {res[[length(res) + 1]] <- div_pre}
 
 

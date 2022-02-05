@@ -21,11 +21,11 @@ knitr::opts_chunk$set(
 
 Workshop Utilities for R contains utility functions for planning and conducting R workshops in a virtual environment. These include:
 
-- createing custom HTML reports for a Google Form registration surveys  
+- Create custom HTML summary reports from a Google Form survey (i.e., workshop registration)
 
-- plot online PNG and JPG images in RStudio, as a kind of popup slide that can be embedded in a script
+- Plot online PNG and JPG images in RStudio with a single function, as a kind of popup slide that can be embedded within a workshop R script
 
-- create HTML pages containing hints and tips, populated by a Google Sheet, that can be embedded in a R Notebook as hints and solutions. Option to create bitly links. *coming soon*
+- *Coming soon:* Create HTML pages containing hints and tips, populated by a Google Sheet, that can be embedded in a R Notebook as hints and solutions. Option to create bitly links.
 
 
 

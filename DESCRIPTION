@@ -5,7 +5,7 @@ Version: 0.1.2
 Date: 2022-02-04
 Maintainer: Andy Lyons <andlyons@ucanr.edu>
 Description: Utilties for planning and conducting virtual R workshops.
-License: GPL-3
+License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Authors@R: person("Andy", "Lyons", email = "andlyons@ucanr.edu", role = c("aut", "cre"))

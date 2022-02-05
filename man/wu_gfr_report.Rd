@@ -9,16 +9,23 @@ wu_gfr_report(
   output_fn,
   output_dir = ".",
   rpt_title = "Google Form Summary",
-  report_rmd = NULL
+  rpt_rmd = NULL
 )
 }
 \arguments{
-\item{resp_tbl}{Responses tibble}
+\item{gfr_elems}{Google Form Summary Elements object}
 
-\item{rpt_tbl}{Report template}
+\item{output_fn}{Report filename}
 
-\item{show_msg}{Show additional messages}
+\item{output_dir}{Output directory}
+
+\item{rpt_title}{The title for the report}
+
+\item{rpt_rmd}{The Rmd file for the report}
 }
 \description{
 Generate elements for a Google Form Summary
+}
+\seealso{
+\code{\link{wu_gfr_elems}}
 }

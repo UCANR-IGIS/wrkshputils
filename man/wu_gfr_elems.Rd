@@ -16,3 +16,16 @@ wu_gfr_elems(resp_tbl, rpt_tbl, show_msg = TRUE)
 \description{
 Generate elements for a Google Form Summary
 }
+\details{
+This function takes two tibbles: i) the responses from a Google Form Survey
+(or any kind of survey, where the format of the responses mirrors that of Google Forms),
+and ii) a tibble that specifies how the questions should be summarized and presented
+in the output report.
+
+This function does not download any data from Google Sheets. It is presumed you have
+already done that. It also doesn't do anything terribly useful with the summaries.
+It is presumed you'll pass the object returned by this function to \code{wu_gfr_report()}, or a similar
+function that renders or analyzes the results.
+
+For an example of \code{rpt_tbl}, please see \href{http://www.google.com}{here}.
+}

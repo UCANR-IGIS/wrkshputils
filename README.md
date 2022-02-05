@@ -1,7 +1,7 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.Rmd. Edit this file, not that one -->
 
-# wrkshputils
+# Workshop Utilities for R
 
 <!-- badges: start -->
 
@@ -9,9 +9,14 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 <!-- badges: end -->
 
-Workshop Utilities for R contains a few utilty functions for planning
-and conducting workshops. They include:
+Workshop Utilities for R contains utility functions for planning and
+conducting R workshops in a virtual environment. These include:
 
--   create custom HTML report for a Google Form survey
--   create HTML pages with hints and tips, with an option to created
-    bitly links
+-   createing custom HTML reports for a Google Form registration surveys
+
+-   plot online PNG and JPG images in RStudio, as a kind of popup slide
+    that can be embedded in a script
+
+-   create HTML pages containing hints and tips, populated by a Google
+    Sheet, that can be embedded in a R Notebook as hints and solutions.
+    Option to create bitly links. *coming soon*

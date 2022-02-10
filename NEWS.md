@@ -1,3 +1,7 @@
+# wrkshputils 0.1.3 (2022-02-10)
+
+* `wu_popup()`: Updated to use RStudio Viewer; removed dependency on `imager`
+
 # wrkshputils 0.1.2 (2022-02-04)
 
 * `wu_popup()`: New function to plot an image from a URL

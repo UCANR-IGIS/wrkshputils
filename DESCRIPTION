@@ -1,8 +1,8 @@
 Package: wrkshputils
 Type: Package
 Title: Utilities for Workshops
-Version: 0.1.2
-Date: 2022-02-04
+Version: 0.1.3
+Date: 2022-02-10
 Maintainer: Andy Lyons <andlyons@ucanr.edu>
 Description: Utilties for planning and conducting virtual R workshops.
 License: GPL (>= 3)
@@ -17,6 +17,5 @@ Imports:
     htmltools,
     ggplot2,
     crayon,
-    rmarkdown,
-    imager
+    rmarkdown
 RoxygenNote: 7.1.2

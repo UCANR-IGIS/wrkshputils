@@ -1,3 +1,7 @@
+# wrkshputils 0.1.4 (2022-02-10)
+
+* `wu_popup()`: Added `bgcol` argument; Fixed an error trapping bug
+
 # wrkshputils 0.1.3 (2022-02-10)
 
 * `wu_popup()`: Updated to use RStudio Viewer; removed dependency on `imager`

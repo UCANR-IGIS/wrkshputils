@@ -1,7 +1,7 @@
 Package: wrkshputils
 Type: Package
 Title: Utilities for Workshops
-Version: 0.1.3
+Version: 0.1.4
 Date: 2022-02-10
 Maintainer: Andy Lyons <andlyons@ucanr.edu>
 Description: Utilties for planning and conducting virtual R workshops.

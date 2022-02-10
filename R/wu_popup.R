@@ -2,6 +2,7 @@
 #'
 #' @param x A filename or URL of a PNG or JPG image
 #' @param height The (minimum) height of the viewer pane
+#' @param bgcol Background color
 #'
 #' @details This will display a PNG or JPG image in the RStudio viewer pane.
 #' \code{x} can be either a local file or a URL. This gives you the ability to
@@ -10,6 +11,8 @@
 #' \code{height} determines the minimum height in screen pixels that the viewer pane will
 #' resize itself to (if needed). Set to \code{NULL} to disable.
 #'
+#' \code{bgcol} can be a named HTML color (e.g., \code{gray}) or a hexadecimal HTML color value (e.g., \code{#FF0034}).
+#'
 #' @examples
 #' \dontrun{
 #' wu_popup("http://placekitten.com/800/600")
@@ -17,13 +20,10 @@
 #'
 #' @importFrom utils browseURL
 #' @importFrom tools file_ext
+#' @importFrom magrittr "%>%"
 #' @export
 
-wu_popup <- function(x, height = 360) {
-
-  ## Identify the extension of the URL
-  img_ext <- file_ext(x)
-  if (!tolower(img_ext) %in% c("png", "jpg", "jpeg", "svg")) stop("Supported image formats include png, jpg, and svg files.")
+wu_popup <- function(x, height = 360, bgcol = "#222") {
 
   if (grepl("^http", x, ignore.case = TRUE)) {
     ## This is a URL
@@ -32,6 +32,10 @@ wu_popup <- function(x, height = 360) {
   } else {
     ## This is a local image file
     if (!file.exists(x)) stop(paste0("Can't find ", x))
+
+    ## Check the file name extension
+    img_ext <- file_ext(x)
+    if (!tolower(img_ext) %in% c("png", "jpg", "jpeg", "svg")) stop("Supported image formats include png, jpg, and svg files.")
 
     ## Create a file name in the temp dir
     img_tmp_fn <- tempfile(fileext = paste0(".", img_ext))
@@ -44,17 +48,19 @@ wu_popup <- function(x, height = 360) {
 
   }
 
-  ## Get the viewer function if we're in RStudio, else browseURL
+  ## Get the viewer function. If not found (i.e., b/c we're not in RStudio) set it to NA
   viewer <- getOption("viewer", default = NA)
 
   ## Get the popup.html template
   popup_templt_fn <-system.file("popup.html", package="wrkshputils")
   popup_orig_chr <- readLines(popup_templt_fn)
 
-  ## Swap in the URL
-  popup_swpd_chr <- gsub("<img-url-here>", img_url, popup_orig_chr, ignore.case = TRUE)
+  ## Swap in the URL and background color
+  popup_swpd_chr <- popup_orig_chr %>%
+    gsub("<img-url-here>", img_url, ., ignore.case = TRUE) %>%
+    gsub("<bgcol>", bgcol, ., ignore.case = TRUE)
 
-  ## Save the swapped HTML file to disk
+  ## Save the swapped HTML file to the temp dir
   popup_tmp_fn <- tempfile(fileext = ".html")
   cat(popup_swpd_chr, file = popup_tmp_fn)
 

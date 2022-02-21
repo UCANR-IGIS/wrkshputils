@@ -2,7 +2,7 @@
 % Please edit documentation in R/wu_gfr_report.R
 \name{wu_gfr_report}
 \alias{wu_gfr_report}
-\title{Generate elements for a Google Form Summary}
+\title{Generate a complete Google Form Summary HTML Report}
 \usage{
 wu_gfr_report(
   gfr_elems,
@@ -24,7 +24,7 @@ wu_gfr_report(
 \item{rpt_rmd}{The Rmd file for the report}
 }
 \description{
-Generate elements for a Google Form Summary
+Generate a complete Google Form Summary HTML Report
 }
 \seealso{
 \code{\link{wu_gfr_elems}}

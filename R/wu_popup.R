@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' wu_popup("http://placekitten.com/800/600")
+#' wu_popup("http://placekitten.com/400/300")
 #' }
 #'
 #' @importFrom utils browseURL

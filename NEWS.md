@@ -1,3 +1,11 @@
+# wrkshputils 0.2.0 (2022-02-20)
+
+* `wu_img_maketrans()`: New function to make a folder of PNG images have transparent background
+* `wu_img_build()`: New function, returns a taglist
+* `wu_gfr_elems()`: Added `skip`, `pie`, and `map` as an element types
+* `wu_gfr_taglist()`: New function, generates HTML tags for a gfr_elems object
+* `wu_gfr_snippet()`: New function, similar to `wu_gfr_report()` but generates a snippet of HTML code to be inserted in a HTML slide deck
+
 # wrkshputils 0.1.4 (2022-02-10)
 
 * `wu_popup()`: Added `bgcol` argument; Fixed an error trapping bug

@@ -1,4 +1,4 @@
-#' Generate elements for a Google Form Summary
+#' Generate a complete Google Form Summary HTML Report
 #'
 #' @param gfr_elems Google Form Summary Elements object
 #' @param output_fn Report filename

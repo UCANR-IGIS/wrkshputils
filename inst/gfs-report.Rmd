@@ -24,12 +24,19 @@ h2 {
   font-size:22px;
   color:#286090;
 }
-h3 {
+h3, p.qtext {
   font-weight:bold;
   font-size:18px;
+  margin-top:2em;
 }
-p.qtext {
-  font-size:16px;
+h4.date {
+  font-size:90%;
+  color:#444;
+  font-style:italic;
+}
+p.qtext1 {
+  font-size:18px;
+  font-weight:bold;
   font-style:italic;
   margin-top:2em;
   color:#286090;
@@ -44,54 +51,26 @@ p.howmany {
   font-style:italic;
   color:#286090;
 }
-
-
 ```
+
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(htmltools)
-library(ggplot2)
 library(knitr)
+library(leaflet)
 ```
 
+```{r echo = FALSE}
+html_taglist <- wu_gfr_taglist(params$rpt_elemnts)
 
-```{r echo = FALSE, results = 'asis'}
-for (i in 1:length(params$rpt_elemnts)) {
-  
-  if (inherits(params$rpt_elemnts[[i]], "ggplot_with_params")) {
+## Print all the HTML tags outside the loop so they are at the top level
+htmltools::tagList(html_taglist)
 
-    ## Get the plotting parameters: width in px | height in px | dpi
-    plt_wdt_hgt_dpi <- params$rpt_elemnts[[i]][[2]] %>% strsplit("\\|") %>% extract2(1) %>% trimws() %>% as.numeric()
-
-    ## Create a temp PNG file
-    ggtmp_fn <- tempfile("gfs_ggplot-", fileext = ".png")
-    
-    ## Save the ggplot to the temp file. We compute the width and height in terms of inches
-    ## so that the text elements will size correctly
-    ggsave(filename = ggtmp_fn,
-           plot = params$rpt_elemnts[[i]][[1]],
-           device = "png",
-           width = plt_wdt_hgt_dpi[1] / plt_wdt_hgt_dpi[3],
-           height = plt_wdt_hgt_dpi[2] / plt_wdt_hgt_dpi[3],
-           units = "in",
-           dpi = plt_wdt_hgt_dpi[3])
-
-    ## Create the img tag using a image_uri
-    print(img(src=knitr::image_uri(ggtmp_fn)))
-
-    ## Delete the temp file
-    unlink(ggtmp_fn)
-
-  } else {
-    print(params$rpt_elemnts[[i]])
-  }
-}
 ```
+
+<p>&nbsp;</p>
 
 <p style="color:#444; font-style:italic; font-size:90%; text-align:right; border-top:1px solid #888; padding-top:0.5em;">Created with <a href="https://github.com/ucanr-igis/wrkshputils/" target="_blank" rel="noopener">Workshop Utilities for R</a> by <a href="https://igis.ucanr.edu/" target="_blank" rel="noopener">IGIS</a></p>
 
 <p>&nbsp;</p>
-
-
-

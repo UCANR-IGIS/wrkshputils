@@ -1,0 +1,40 @@
+#' Generate a snippet of HTML code for summary report
+#'
+#' @param gfr_elems Google Form Summary Elements object
+#' @param output_fn Report filename
+#' @param output_dir Output directory
+#' @param overwrite Overwrite an existing file, Logical
+#'
+#' @details This generates the same HTML content as \code{\link{wu_gfr_report}},
+#' however only the report elements are saved to the HTML file. In other words
+#' this function doesn't produce a full
+#'
+#'
+#' @seealso \code{\link{wu_gfr_elems}}, \code{\link{wu_gfr_report}}
+#' @importFrom knitr image_uri
+#' @importFrom htmltools tagList img
+#' @importFrom ggplot2 ggsave
+#' @importFrom magrittr extract2
+#'
+#' @export
+
+wu_gfr_snippet <- function(gfr_elems, output_fn, output_dir = ".", overwrite = TRUE) {
+
+  if (!file.exists(output_dir)) stop("Output directory does not exist")
+
+  out_fn <- normalizePath(file.path(output_dir, output_fn), mustWork = FALSE)
+
+  if (file.exists(out_fn) && !overwrite) stop(paste0(out_fn, " exists. Set `overwrite = TRUE` or save to a new file."))
+
+  html_taglist <- wu_gfr_taglist(gfr_elems)
+
+  sink(file = out_fn)
+  on.exit(sink())
+  print(htmltools::tagList(html_taglist))
+  sink()
+  on.exit()
+  message(paste0("Report elements written to HTML snippet:\n", out_fn))
+
+  invisible(out_fn)
+
+}

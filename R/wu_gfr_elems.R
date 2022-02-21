@@ -23,6 +23,7 @@
 #' @import dplyr
 #' @import htmltools
 #' @import ggplot2
+#' @importFrom leaflet leaflet addTiles addCircleMarkers
 
 wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
   res <- list()
@@ -52,6 +53,15 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
         if (is.na(elem_qtext)) {
           message(yellow(paste0(" - row ", i + 1, ": question text missing")))
         } else {
+
+          if (!is.na(elem_prp$find_replace)) {
+            if (grepl("survey_size", elem_prp$find_replace)) {
+              elem_qtext <- elem_qtext %>%
+                gsub("\\[n\\]", nrow(resp_tbl), .)
+            }
+          }
+
+
           ## I can't add an element to res with c(), list(), or append(), because they
           ## all take the elements of the shing.tag (also a list) and make them separate elements
           ## res[[length(res) + 1]] <- get(elem_type, pos = "package:htmltools")(elem_qtext)
@@ -65,8 +75,8 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
           message(yellow(paste0(" - row ", i + 1, ": question text missing")))
         } else {
 
-          if (!is.na(elem_prp$vars)) {
-            if (grepl("survey_size", elem_prp$vars)) {
+          if (!is.na(elem_prp$find_replace)) {
+            if (grepl("survey_size", elem_prp$find_replace)) {
               elem_qtext <- elem_qtext %>%
                 gsub("\\[n\\]", nrow(resp_tbl), .)
             }
@@ -104,9 +114,9 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
           message(yellow(paste0(" - row ", i + 1, ": could not find the column `", elem_prp$column, "`")))
         }
 
-      } else if (substr(elem_type, 1, 5) == "histo") {
+      } else if (substr(elem_type, 1, 5) == "histo" || elem_type == "pie") {
 
-        ## Histogram (vertical or horizontal)
+        ## This is a histogram (vertical or horizontal) or Pie chart
         if (elem_prp$column %in% names(resp_tbl)) {
 
           ## Initialize a placeholder for 'other' values
@@ -228,31 +238,38 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
             vals_tab_lst <- vals_tab_lst[order_idx]
           }
 
-          ## Create the bar chart
+          ## Create the frequeny table
           vals_tab_df <- data.frame(label = factor(names(vals_tab_lst), levels = names(vals_tab_lst)),
                                     cnt = vals_tab_lst %>% unlist() %>% as.numeric())
 
-          histo_plot <- ggplot(data = vals_tab_df, aes(x = label, y = cnt)) +
-            geom_bar(stat="identity") +
-            theme_gray() +
-            theme(axis.title.x=element_blank(),
-                  axis.title.y=element_blank())
+          if (elem_type == "pie") {
+            histopie_plot <- ggplot(vals_tab_df, aes(x = "", y = cnt, fill = label)) +
+              geom_bar(stat = "identity", width = 1, color="white") +
+              coord_polar("y", start = 0) +
+              theme_void() +
+              theme(legend.title=element_blank()) +
+              scale_fill_brewer(palette="Dark2")
 
-          ## Flip the axis if needed
-          if (grepl("_v$", elem_type)) {
-            histo_plot <- histo_plot + coord_flip()
+          } else {
+            histopie_plot <- ggplot(data = vals_tab_df, aes(x = label, y = cnt)) +
+              geom_bar(stat="identity") +
+              theme_gray() +
+              theme(axis.title.x=element_blank(),
+                    axis.title.y=element_blank())
+
+            ## Flip the axis if needed
+            if (grepl("_v$", elem_type)) {
+              histopie_plot <- histopie_plot + coord_flip()
+            }
+
           }
 
           ## Add elements to res
-          ## res[[length(res) + 1]] <- p(elem_qtext, class = "qtext")
           res[[length(res) + 1]] <- HTML(paste0("<p class='qtext'>", elem_qtext, "</p>"))
 
           if (!is.null(select_many_lbl)) {
             res[[length(res) + 1]] <- select_many_lbl
           }
-
-          # if (!is.null(div_pre)) {res[[length(res) + 1]] <- div_pre}
-
 
           if (is.na(elem_prp$plot_params)) {
             plot_size_params <- "680|480|120"
@@ -262,7 +279,7 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
 
           }
 
-          ggplot_specs <- list(histo_plot, plot_size_params)
+          ggplot_specs <- list(histopie_plot, plot_size_params)
           class(ggplot_specs) <- c("list", "ggplot_with_params")
           res[[length(res) + 1]] <- ggplot_specs
 
@@ -274,6 +291,41 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
         } else {
           message(yellow(paste0(" - row ", i + 1, ": could not find the column `", elem_prp$column, "`")))
         }
+
+
+      } else if (elem_type == "map") {
+
+
+
+        if (elem_prp$column %in% names(resp_tbl)) {
+
+          ## Turn the vector of csv coords (lon,lat) into a data frame
+          coords_df <- resp_tbl %>%
+            pull(elem_prp$column) %>%
+            strsplit(",") %>%
+            unlist() %>%
+            as.numeric() %>%
+            matrix(ncol = 2, byrow = TRUE) %>%
+            as.data.frame() %>%
+            setNames(c("lon", "lat"))
+
+          ## Create a basic leaflet map with clusters
+          m <- leaflet(coords_df) %>%
+            addTiles() %>%
+            addCircleMarkers(stroke = FALSE, fillOpacity = 0.5, clusterOptions = 1)
+
+          ## Add elements to res
+          res[[length(res) + 1]] <- HTML(paste0("<p class='qtext'>", elem_qtext, "</p>"))
+          res[[length(res) + 1]] <- m
+
+        } else {
+          message(yellow(paste0(" - row ", i + 1, ": could not find the column `", elem_prp$column, "`")))
+        }
+
+
+
+      } else if (elem_type == "skip") {
+
 
 
       } else {

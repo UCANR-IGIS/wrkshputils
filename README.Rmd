@@ -26,6 +26,8 @@ Workshop Utilities for R contains utility functions for planning and conducting 
 
 - Display PNG, JPG, or SVG images in the RStudio viewer pane, as a kind of popup slide that can be embedded within a workshop R script
 
+- Take a series of PNG files that collectively represent a slide build, and i) make white pixels transparent (so they can be overlaid), and ii) generate HTML tags that can be inserted into a R Markdown HTML slide deck to animate the build.
+
 - *Coming soon:* Create HTML pages containing hints and tips, populated by a Google Sheet, that can be embedded in a R Notebook as hints and solutions. Option to create bitly links.
 
 # Installation

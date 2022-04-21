@@ -1,54 +1,83 @@
 #' Make PNG images transparent backgrounds
 #'
-#' @param img_fn PNG filename
-#' @param img_dir Image directory
-#' @param pattern Pattern to match for input images
-#' @param ext_out Output extension
+#' @param x Vector of image file names or a directory
+#' @param pattern Pattern to match if x is a directory
+#' @param out_dir Output directory
+#' @param out_fn A filename template
+#' @param overwrite Overwrite existing files
 #'
-#' @details This will take a directory of PNG files and create versions where the color white is transparent.
-#' This can be useful if you want to use the images as a build.
+#' @details This will take one or more PNG files (e.g., PowerPoint slides) and export versions where white becomes
+#' transparent. This can be useful if you want to use the images as a build.
 #'
-#' You must pass
+#' \code{x} can be a directory that contains image files, or a vector of filenames. If \code{x} is a directory,
+#' you can use \code{pattern} to pass a regular expression.
+#'
+#' \code{out_dir} is the output directory (optional). \code{out_fn} is a file name template that will be passed
+#' to \code{sprintf} for evaluation. Example: \code{out_fn = \"slide_\%02d.png\"} will result in output files named
+#' slide_01.png, slide_02.png, slide_03.png, etc. If \code{out_fn} is NULL, the original file names
+#' appended with '_trnsbg.png' will be used for the output files.
+#'
+#' @seealso \code{\link{wu_img_build}}
 #'
 #' @importFrom magick image_read image_write image_transparent
 #' @export
 
-wu_img_maketrans <- function(img_fn = NULL, img_dir = NULL, pattern = ".png$", ext_out= "_bgtrns.png") {
+wu_img_maketrans <- function(x, pattern = ".png$", out_dir = NULL, out_fn = "img_%03d.png", overwrite = FALSE) {
 
-  ## This will take a folder of PNG files (i.e., exported from PowerPoint) and save
-  ## versions of them with transparent background
+  if (length(x) == 1 && file.info(x[[1]])[["isdir"]]) {
 
-  if (!is.null(img_fn) && !is.null(img_dir)) stop("Pass either img_fn or img_dir, not both.")
-
-  if (!is.null(img_fn)) {
-    if (!file.exists(img_fn)) stop(paste0(img_fn, " not found"))
-    img_in <- image_read(img_fn)
-    img_out <- paste0(tools::file_path_sans_ext(img_fn), ext_out)
-    image_write(img_in %>% image_transparent('white'),
-                path = img_out, format = "png")
-    invisible(img_out)
-
-  } else if (!is.null(img_dir))  {
-    img_in_fns <- list.files(img_dir,
+    ## x is a directory
+    img_in_fns <- list.files(x,
                              pattern = pattern,
                              full.names = TRUE,
                              ignore.case = TRUE)
 
-    if (length(img_in_fns) == 0) stop("No images found that match the pattern")
+    if (length(img_in_fns) == 0) stop("No image files found that match the pattern")
 
-    img_out_fns <- gsub(".png$", ext_out, img_in_fns, ignore.case = TRUE)
-
-    for (i in 1:length(img_in_fns)) {
-      img_in <- image_read(img_in_fns[i])
-      image_write(img_in %>% image_transparent('white'),
-                  path = img_out_fns[i],
-                  format = "png")
+    ## Define out_dir_use
+    if (is.null(out_dir)) {
+      out_dir_use <- x
+    } else {
+      if (!dir.exists(out_dir)) stop(paste0(out_dir, " does not exist"))
+      out_dir_use <- out_dir
     }
-    invisible(img_out_fns)
 
   } else {
+    ## x should be a vector of file names
+    if (FALSE %in% file.exists(x)) stop("image(s) not found")
+    img_in_fns <- x
 
-    stop("Input directory not found")
+    ## Define out_dir_use
+    if (is.null(out_dir)) {
+      out_dir_use <- unique(dirname(img_in_fns))
+      if (length(out_dir_use) != 1) stop("if the source images come from multiple folders, please specify `out_dir`")
+
+    } else {
+      if (!dir.exists(out_dir)) stop(paste0(out_dir, " does not exist"))
+      out_dir_use <- out_dir
+    }
+
   }
+
+  ## Generate the output file names
+  if (is.null(out_fn)) {
+    out_fn_use <- gsub(".png$", "_trnsbg.png", basename(img_in_fns), ignore.case = TRUE)
+  } else {
+    out_fn_use <- sprintf(out_fn, 1:length(img_in_fns))
+  }
+
+  if (!overwrite) {
+    if (TRUE %in% file.exists(file.path(out_dir_use, out_fn_use))) stop("One or more output files already exist. Set `overwrite = TRUE`, or change `out_dir` or `out_fn`.")
+  }
+
+  ## Export the images
+  for (i in 1:length(img_in_fns)) {
+    img_in <- image_read(img_in_fns[i])
+    image_write(img_in %>% image_transparent('white'),
+                path = file.path(out_dir_use, out_fn_use[i]),
+                format = "png")
+  }
+
+  invisible(out_fn_use)
 
 }

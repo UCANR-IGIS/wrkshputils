@@ -5,27 +5,39 @@
 \title{Make PNG images transparent backgrounds}
 \usage{
 wu_img_maketrans(
-  img_fn = NULL,
-  img_dir = NULL,
+  x,
   pattern = ".png$",
-  ext_out = "_bgtrns.png"
+  out_dir = NULL,
+  out_fn = "img_\%03d.png",
+  overwrite = FALSE
 )
 }
 \arguments{
-\item{img_fn}{PNG filename}
+\item{x}{Vector of image file names or a directory}
 
-\item{img_dir}{Image directory}
+\item{pattern}{Pattern to match if x is a directory}
 
-\item{pattern}{Pattern to match for input images}
+\item{out_dir}{Output directory}
 
-\item{ext_out}{Output extension}
+\item{out_fn}{A filename template}
+
+\item{overwrite}{Overwrite existing files}
 }
 \description{
 Make PNG images transparent backgrounds
 }
 \details{
-This will take a directory of PNG files and create versions where the color white is transparent.
-This can be useful if you want to use the images as a build.
+This will take one or more PNG files (e.g., PowerPoint slides) and export versions where white becomes
+transparent. This can be useful if you want to use the images as a build.
 
-You must pass
+\code{x} can be a directory that contains image files, or a vector of filenames. If \code{x} is a directory,
+you can use \code{pattern} to pass a regular expression.
+
+\code{out_dir} is the output directory (optional). \code{out_fn} is a file name template that will be passed
+to \code{sprintf} for evaluation. Example: \code{out_fn = \"slide_\%02d.png\"} will result in output files named
+slide_01.png, slide_02.png, slide_03.png, etc. If \code{out_fn} is NULL, the original file names
+appended with '_trnsbg.png' will be used for the output files.
+}
+\seealso{
+\code{\link{wu_img_build}}
 }

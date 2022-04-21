@@ -1,3 +1,7 @@
+# wrkshputils 0.2.1 (2022-04-21)
+
+* `wu_img_maketrans()`: Arguments overhauled to make it simpler to call. See function help page.
+
 # wrkshputils 0.2.0 (2022-02-20)
 
 * `wu_img_maketrans()`: New function to make a folder of PNG images have transparent background

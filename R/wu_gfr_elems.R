@@ -22,10 +22,11 @@
 #' @importFrom stats na.omit setNames
 #' @import dplyr
 #' @import htmltools
-#' @import ggplot2
-#' @importFrom leaflet leaflet addTiles addCircleMarkers
 
 wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
+  if (!requireNamespace("leaflet", quietly = TRUE)) stop("Sorry, this function requires the leaflet package. Please install it then try again.")
+  if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Sorry, this function requires the ggplot2 package. Please install it then try again.")
+
   res <- list()
 
   ## Loop through the report elements
@@ -151,7 +152,7 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
               ## Get the 'other' values
               if ("Other…" %in% all_vals_vec) {
 
-                # THIS APPROACH DIDN'T WORK - YOU CAN'T RELIABLE SPLIT ANSWERS AT COMMAS, BECAUSE SOME OF THE STANDARD
+                # THIS APPROACH DIDN'T WORK - YOU CAN'T RELIABLY SPLIT ANSWERS AT COMMAS, BECAUSE SOME OF THE STANDARD
                 # CHOICES MIGHT HAVE COMMAS IN THEM!!
                 # unparsed_resp_split <- unparsed_resp_vec %>%
                 #   strsplit(",", fixed = TRUE) %>%
@@ -243,23 +244,23 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
                                     cnt = vals_tab_lst %>% unlist() %>% as.numeric())
 
           if (elem_type == "pie") {
-            histopie_plot <- ggplot(vals_tab_df, aes(x = "", y = cnt, fill = label)) +
-              geom_bar(stat = "identity", width = 1, color="white") +
-              coord_polar("y", start = 0) +
-              theme_void() +
-              theme(legend.title=element_blank()) +
-              scale_fill_brewer(palette="Dark2")
+            histopie_plot <- ggplot2::ggplot(vals_tab_df, ggplot2::aes(x = "", y = cnt, fill = label)) +
+              ggplot2::geom_bar(stat = "identity", width = 1, color="white") +
+              ggplot2::coord_polar("y", start = 0) +
+              ggplot2::theme_void() +
+              ggplot2::theme(legend.title = ggplot2::element_blank()) +
+              ggplot2::scale_fill_brewer(palette="Dark2")
 
           } else {
-            histopie_plot <- ggplot(data = vals_tab_df, aes(x = label, y = cnt)) +
-              geom_bar(stat="identity") +
-              theme_gray() +
-              theme(axis.title.x=element_blank(),
-                    axis.title.y=element_blank())
+            histopie_plot <- ggplot2::ggplot(data = vals_tab_df, ggplot2::aes(x = label, y = cnt)) +
+              ggplot2::geom_bar(stat="identity") +
+              ggplot2::theme_gray() +
+              ggplot2::theme(axis.title.x = ggplot2::element_blank(),
+                    axis.title.y = ggplot2::element_blank())
 
             ## Flip the axis if needed
             if (grepl("_v$", elem_type)) {
-              histopie_plot <- histopie_plot + coord_flip()
+              histopie_plot <- histopie_plot + ggplot2::coord_flip()
             }
 
           }
@@ -310,9 +311,9 @@ wu_gfr_elems <- function(resp_tbl, rpt_tbl, show_msg = TRUE) {
             setNames(c("lon", "lat"))
 
           ## Create a basic leaflet map with clusters
-          m <- leaflet(coords_df) %>%
-            addTiles() %>%
-            addCircleMarkers(stroke = FALSE, fillOpacity = 0.5, clusterOptions = 1)
+          m <- leaflet::leaflet(coords_df) %>%
+            leaflet::addTiles() %>%
+            leaflet::addCircleMarkers(stroke = FALSE, fillOpacity = 0.5, clusterOptions = 1)
 
           ## Add elements to res
           res[[length(res) + 1]] <- HTML(paste0("<p class='qtext'>", elem_qtext, "</p>"))

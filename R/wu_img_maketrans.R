@@ -6,8 +6,14 @@
 #' @param out_fn A filename template
 #' @param overwrite Overwrite existing files
 #'
-#' @details This will take one or more PNG files (e.g., PowerPoint slides) and export versions where white becomes
+#' @details This will take one or more PNG files (e.g., saved from PowerPoint slides) and create copies where white becomes
 #' transparent. This can be useful if you want to use the images as a build.
+#'
+#' \strong{TIP}: if the source of your PNG files are a series of PowerPoint slides (that you convert to PNG with
+#' File >> Save As...), set the size of your PowerPoint slides to produce the desired output dimensions.
+#' When you save PowerPoint slides to raster formats, it saves them as 96 dpi (unless you've tweaked that).
+#' So for example if you want to create PNG files that are 1000 x 562 (roughly 16:9 that will display fine on
+#' a single slide), set the size of your PowerPoint presentation to 10.4" x 5.9".
 #'
 #' \code{x} can be a directory that contains image files, or a vector of filenames. If \code{x} is a directory,
 #' you can use \code{pattern} to pass a regular expression.
@@ -19,10 +25,11 @@
 #'
 #' @seealso \code{\link{wu_img_build}}
 #'
-#' @importFrom magick image_read image_write image_transparent
 #' @export
 
 wu_img_maketrans <- function(x, pattern = ".png$", out_dir = NULL, out_fn = "img_%03d.png", overwrite = FALSE) {
+
+  if (!requireNamespace("magick", quietly = TRUE)) stop("Sorry, this function requires the magick package. Please install it then try again.")
 
   if (length(x) == 1 && file.info(x[[1]])[["isdir"]]) {
 
@@ -72,8 +79,8 @@ wu_img_maketrans <- function(x, pattern = ".png$", out_dir = NULL, out_fn = "img
 
   ## Export the images
   for (i in 1:length(img_in_fns)) {
-    img_in <- image_read(img_in_fns[i])
-    image_write(img_in %>% image_transparent('white'),
+    img_in <- magick::image_read(img_in_fns[i])
+    magick::image_write(img_in %>% magick::image_transparent('white'),
                 path = file.path(out_dir_use, out_fn_use[i]),
                 format = "png")
   }

@@ -9,7 +9,9 @@ wu_img_build(
   display_first = TRUE,
   img_class = "stackme",
   center = FALSE,
-  border = c("none", "1px solid gray")[1]
+  border = c("none", "1px solid gray")[1],
+  include_css = FALSE,
+  base_dir = NULL
 )
 }
 \arguments{
@@ -22,6 +24,10 @@ wu_img_build(
 \item{center}{Center the DIV on the document}
 
 \item{border}{A valid CSS style for the DIV border}
+
+\item{include_css}{Include the CSS for the images}
+
+\item{base_dir}{Where to look for the files#'}
 }
 \description{
 Generate a list of HTML tags to show stacked PNGs
@@ -34,7 +40,10 @@ files will be added to the DIV in the order received. All images should have the
 dimensions, and images after the first one should either have transparent backgrounds
 or contain the earlier elements in them.
 
-To use this function, add the following style to your Rmarkdown document:
+To use this function, add the following style definition to your Rmarkdown document. Alternately,
+you can pass \code{include_css = TRUE}, but note that this will insert the style definition into
+your HTML document each time you insert an image build, so you really only need to add
+ \code{include_css = TRUE} on the first build in the slide deck.
 
 \preformatted{
 ```{css echo = FALSE}
@@ -46,12 +55,13 @@ img.stackme {
 ```
 }
 
-Create the build with:
+Insert the build into your Markdown with something like:
 
 \preformatted{
 ```{r echo = FALSE, results = "asis"}
-img_fns <- paste0("./images/rnotebooks (", 1:9, ").png")
-htmltools::tagList(wrkshputils::wu_img_build(img_fns, display_first = TRUE, center = FALSE))
+paste0("./images/myslide_0", 1:6, ".png") %>%
+  wrkshputils::wu_img_build(display_first = TRUE, center = FALSE) %>%
+    htmltools::tagList()
 ```
 }
 }

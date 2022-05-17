@@ -27,8 +27,14 @@ wu_img_maketrans(
 Make PNG images transparent backgrounds
 }
 \details{
-This will take one or more PNG files (e.g., PowerPoint slides) and export versions where white becomes
+This will take one or more PNG files (e.g., saved from PowerPoint slides) and create copies where white becomes
 transparent. This can be useful if you want to use the images as a build.
+
+\strong{TIP}: if the source of your PNG files are a series of PowerPoint slides (that you convert to PNG with
+File >> Save As...), set the size of your PowerPoint slides to produce the desired output dimensions.
+When you save PowerPoint slides to raster formats, it saves them as 96 dpi (unless you've tweaked that).
+So for example if you want to create PNG files that are 1000 x 562 (roughly 16:9 that will display fine on
+a single slide), set the size of your PowerPoint presentation to 10.4" x 5.9".
 
 \code{x} can be a directory that contains image files, or a vector of filenames. If \code{x} is a directory,
 you can use \code{pattern} to pass a regular expression.

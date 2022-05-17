@@ -5,14 +5,17 @@
 #' @details This will return a list of HTML tags for the elements in gfr_elems
 #'
 #' @seealso \code{\link{wu_gfr_elems}}
-#' @importFrom knitr image_uri
-#' @importFrom htmltools img
-#' @importFrom ggplot2 ggsave
+#'
 #' @importFrom magrittr extract2
 #'
 #' @export
 
 wu_gfr_taglist <- function(gfr_elems) {
+
+  ## The following packages are needed by the Rmd file so we check for their existence here
+  if (!requireNamespace("ggplot2", quietly = TRUE)) stop("Sorry, this function requires the ggplot2 package. Please install it then try again.")
+  if (!requireNamespace("htmltools", quietly = TRUE)) stop("Sorry, this function requires the htmltools package. Please install it then try again.")
+  if (!requireNamespace("knitr", quietly = TRUE)) stop("Sorry, this function requires the knitr package. Please install it then try again.")
 
   html_lst <- list()
 
@@ -32,7 +35,7 @@ wu_gfr_taglist <- function(gfr_elems) {
 
       ## Save the ggplot to the temp file. We compute the width and height in terms of inches
       ## so that the text elements will size correctly
-      ggsave(filename = ggtmp_fn,
+      ggplot2::ggsave(filename = ggtmp_fn,
              plot = gfr_elems[[i]][[1]],
              device = "png",
              width = plt_wdt_hgt_dpi[1] / plt_wdt_hgt_dpi[3],

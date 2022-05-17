@@ -1,3 +1,16 @@
+# wrkshputils 0.2.4 (2022-05-17)
+
+* `wu_download()`: New function
+* `magick`, `leaflet` and `ggplot2` packages moved from Imports to Suggests to make the package lighter to install for students
+
+# wrkshputils 0.2.3 (2022-05-10)
+
+* `wu_img_build()`: Added `base_dir` argument.
+
+# wrkshputils 0.2.2 (2022-04-28)
+
+* `wu_img_build()`: Added `include_css` argument.
+
 # wrkshputils 0.2.1 (2022-04-21)
 
 * `wu_img_maketrans()`: Arguments overhauled to make it simpler to call. See function help page.

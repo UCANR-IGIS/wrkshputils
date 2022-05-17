@@ -21,7 +21,7 @@ Generate a snippet of HTML code for summary report
 \details{
 This generates the same HTML content as \code{\link{wu_gfr_report}},
 however only the report elements are saved to the HTML file. In other words
-this function doesn't produce a full
+this function doesn't produce a full HTML report
 }
 \seealso{
 \code{\link{wu_gfr_elems}}, \code{\link{wu_gfr_report}}

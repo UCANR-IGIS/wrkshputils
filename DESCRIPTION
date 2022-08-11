@@ -1,25 +1,18 @@
 Package: wrkshputils
 Type: Package
 Title: Utilities for Workshops
-Version: 0.2.5
-Date: 2022-05-21
+Version: 0.3.0
+Date: 2022-08-06
 Maintainer: Andy Lyons <andlyons@ucanr.edu>
 Description: Utilties for planning and conducting virtual R workshops.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 Authors@R: person("Andy", "Lyons", email = "andlyons@ucanr.edu", role = c("aut", "cre"))
-BugReports: https://github.com/ucanr-igis/uasimg/issues
-URL: https://github.com/ucanr-igis/uasimg
+BugReports: https://github.com/ucanr-igis/wrkshputils/issues
+URL: https://github.com/ucanr-igis/wrkshputils
 Imports: 
     magrittr,
-    dplyr,
-    htmltools,
-    crayon,
-    knitr,
-    rmarkdown
+    crayon
 Suggests:
-    magick,
-    leaflet,
-    ggplot2
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.1

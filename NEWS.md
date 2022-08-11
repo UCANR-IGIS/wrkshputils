@@ -1,3 +1,15 @@
+# wrkshputils 0.3.0 (2022-08-06)
+
+* `wu_gfr_elems()`, `wu_gfr_report()`, `wu_gfr_snippet()`, `wu_gfr_taglist()`, `wu_img_build()`, `wu_img_maketrans()`, and `wu_meme()` removed (split off to a new slideutils package) to reduce the number of dependencies and leave only those functions needed by students in workshops.
+
+# wrkshputils 0.2.7 (2022-08-05)
+
+* `wu_img_build()`: Added check for final slash on `base_dir` argument.
+
+# wrkshputils 0.2.6 (2022-06-19)
+
+* `wu_meme()`: New function
+
 # wrkshputils 0.2.5 (2022-05-21)
 
 * `wu_download()`: Additional messages provided

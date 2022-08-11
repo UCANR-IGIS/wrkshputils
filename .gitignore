@@ -1,0 +1,10 @@
+.Rhistory
+.RData
+.Rproj.user
+*.Rproj
+*.bak
+.gitattributes
+inst/doc
+~*
+doc
+Meta
